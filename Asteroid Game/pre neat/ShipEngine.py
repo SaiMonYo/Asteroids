@@ -14,7 +14,6 @@ vector2D = pygame.math.Vector2
 
 class spaceship():
     def __init__(self, win):
-        self.score = 0
         # vertical height
         self.vHeight = 20
         # base width
@@ -153,7 +152,7 @@ class spaceship():
     def spawn_bullet(self):
         # only spawns a bullet after a delay
         now = time.time()
-        if not now - self.lastShot > self.bulletCooldown or len(self.bullets) > 5:
+        if not now - self.lastShot > self.bulletCooldown:
             return
         bull = bullet(self.win, self.angle, self.pos)
         self.bullets.append(bull)

@@ -14,7 +14,6 @@ vector2D = pygame.math.Vector2
 
 class spaceship():
     def __init__(self, win):
-        self.score = 0
         # vertical height
         self.vHeight = 20
         # base width
@@ -29,24 +28,19 @@ class spaceship():
         # getting the angle the ship is pointing in
         self.angle = math.pi
 
-        ## MOVEMENT
+        # used in movement
         self.thrusting = False
         self.acc = vector2D(0, 0)
         self.vel = vector2D(0, 0)
         self.maxSpeed = 5
 
-        ## BULLETS ##
+        # bullets
         self.bulletCooldown = 0.3
         self.lastShot = 0
         self.bullets = []
 
-        ## 3 outside points of the ship
+        # 3 outside points of the ship
         self.update_points()
-
-        ## RAY MARCHING ##
-        self.inputN = 16
-        self.rayAngles = [math.pi * i * 2 / self.inputN for i in range(1, self.inputN + 1)]
-        self.rayLengths = []
 
 # ---------------------------------------------------------------------------------------------------------------#
     def rotate_right(self):
@@ -153,7 +147,7 @@ class spaceship():
     def spawn_bullet(self):
         # only spawns a bullet after a delay
         now = time.time()
-        if not now - self.lastShot > self.bulletCooldown or len(self.bullets) > 5:
+        if not now - self.lastShot > self.bulletCooldown:
             return
         bull = bullet(self.win, self.angle, self.pos)
         self.bullets.append(bull)
@@ -196,27 +190,7 @@ class spaceship():
             if bullet.hit(asteroid):
                 return True
         return False
-
-    
-    # ---------------------------------------------------------------------------------------------------------------#
-    def cast_rays(self, asteroids):
-        # function to get distances in the 8 directions
-        self.rayLengths = []
-        for angle in self.rayAngles:
-            castRadius = 10
-            point = self.pos
-            while castRadius > 1 and castRadius < 500:
-                minDist = math.inf
-                for asteroid in asteroids:
-                    dist = (asteroid.pos - point).length() - asteroid.length
-                    minDist = min(dist, minDist)
-                castRadius = minDist
-                x, y = math.cos(angle) * castRadius + point.x, math.sin(angle) * castRadius + point.y
-                point = vector2D(x, y)
-            self.rayLengths.append((self.pos - point).length())
-            #pygame.draw.aaline(self.win, WHITE, point, self.pos, 1)
                     
-    
 
 
     # ---------------------------------------------------------------------------------------------------------------#

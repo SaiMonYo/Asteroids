@@ -12,7 +12,7 @@ WHITE = (255, 255, 255)
 vector2D = pygame.math.Vector2
 
 class asteroid():
-    def __init__(self, win, n, size, pos, direction, angled = True):
+    def __init__(self, win, n, size, pos, direction):
         # win to draw to
         self.win = win
         self.width, self.height = self.win.get_size()
@@ -38,17 +38,11 @@ class asteroid():
         # random rotation
         self.startAngle = math.pi * 2 * random.random()
 
-        self.angled = angled
         # direction its heading in
-        if self.angled:
-            self.direction = direction
-            # veloctiy going in the direction
-            self.vel = vector2D(math.cos(self.direction), math.sin(self.direction))
+        self.direction = direction
+        # veloctiy going in the direction
+        self.vel = vector2D(math.cos(self.direction), math.sin(self.direction))
 
-        else:
-            self.direction = direction
-            self.vel = self.direction.normalize()
-            
         # biggest, slowest
         if size == 3:
             self.length = 50
@@ -78,7 +72,6 @@ class asteroid():
             # appending the vector
             self.points.append(vector2D(x, y))
 
-    # ---------------------------------------------------------------------------------------------------------------#
     def wrap_around(self):
         # using this so we can refind the points
         # after going out the screen on the other side
@@ -103,7 +96,6 @@ class asteroid():
         # returning whether we wrapped
         return wrapped
 
-    
     def update(self, delta):
         # updating each of the points by velocity
         for p in self.points:
@@ -122,7 +114,6 @@ class asteroid():
                 # replacing the old point with new point
                 self.points[i] = vector2D(x, y)
 
-    # ---------------------------------------------------------------------------------------------------------------#
     def birth(self):
         # minus 1 from size
         self.size -= 1
@@ -133,8 +124,8 @@ class asteroid():
             return []
 
         # creates a new asteroid with similar position and direction to parent asteroid
-        child1 = asteroid(self.win, 12, self.size, self.pos + vector2D(random.randint(-10, 10), random.randint(-10, 10)), self.direction * random.uniform(0.6, 1.4), self.angled)
-        child2 = asteroid(self.win, 12, self.size, self.pos + vector2D(random.randint(-10, 10), random.randint(-10, 10)), self.direction * random.uniform(0.6, 1.4), self.angled)
+        child1 = asteroid(self.win, 12, self.size, self.pos + vector2D(random.randint(-10, 10), random.randint(-10, 10)), self.direction * random.uniform(0.6, 1.4))
+        child2 = asteroid(self.win, 12, self.size, self.pos + vector2D(random.randint(-10, 10), random.randint(-10, 10)), self.direction * random.uniform(0.6, 1.4))
 
         # sets size to be less than 0 so it will be deleted
         self.size = -1
@@ -150,7 +141,7 @@ class asteroid():
         pygame.draw.lines(self.win, WHITE, True, self.points)
 
 
-# ---------------------------------------------------------------------------------------------------------------#
+
 class asteroid_holder():
     def __init__(self, win, startingSize, ship, spawnRadius, n):
         self.win = win
@@ -171,7 +162,7 @@ class asteroid_holder():
         for x in range(startingSize):
             self.spawn(True)
         
-    # ---------------------------------------------------------------------------------------------------------------#
+
     def spawn(self, start = False):
         if start:
 
@@ -210,14 +201,13 @@ class asteroid_holder():
 
         size = random.choice([1] + [2] * 2 + [3] * 3)
 
-        pos = vector2D(x, y)
-        direction = pos - self.ship.pos
+        direction = math.pi * 2 * random.random()
         
-        newAsteroid = asteroid(self.win, self.n, size, (x, y), direction, False)
+        newAsteroid = asteroid(self.win, self.n, size, (x, y), direction)
         self.asteroids.append(newAsteroid)
 
 
-    # ---------------------------------------------------------------------------------------------------------------#   
+        
     def update_asteroids(self, delta):
         for asteroid in self.asteroids:
             asteroid.update(delta)
@@ -230,14 +220,13 @@ class asteroid_holder():
             if dead:
                 self.explosions.pop(i)
         
-    # ---------------------------------------------------------------------------------------------------------------#
+
     def show_asteroids(self):
         for asteroid in self.asteroids:
             asteroid.show()
         for explosion in self.explosions:
             explosion.show_particles()
 
-    # ---------------------------------------------------------------------------------------------------------------#
     def check_collisions(self):
         score = 0
         for asteroid in self.asteroids:

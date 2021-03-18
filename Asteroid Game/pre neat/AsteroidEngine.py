@@ -12,7 +12,7 @@ WHITE = (255, 255, 255)
 vector2D = pygame.math.Vector2
 
 class asteroid():
-    def __init__(self, win, n, size, pos, direction, angled = True):
+    def __init__(self, win, n, size, pos, direction):
         # win to draw to
         self.win = win
         self.width, self.height = self.win.get_size()
@@ -38,17 +38,11 @@ class asteroid():
         # random rotation
         self.startAngle = math.pi * 2 * random.random()
 
-        self.angled = angled
         # direction its heading in
-        if self.angled:
-            self.direction = direction
-            # veloctiy going in the direction
-            self.vel = vector2D(math.cos(self.direction), math.sin(self.direction))
+        self.direction = direction
+        # veloctiy going in the direction
+        self.vel = vector2D(math.cos(self.direction), math.sin(self.direction))
 
-        else:
-            self.direction = direction
-            self.vel = self.direction.normalize()
-            
         # biggest, slowest
         if size == 3:
             self.length = 50
@@ -133,8 +127,8 @@ class asteroid():
             return []
 
         # creates a new asteroid with similar position and direction to parent asteroid
-        child1 = asteroid(self.win, 12, self.size, self.pos + vector2D(random.randint(-10, 10), random.randint(-10, 10)), self.direction * random.uniform(0.6, 1.4), self.angled)
-        child2 = asteroid(self.win, 12, self.size, self.pos + vector2D(random.randint(-10, 10), random.randint(-10, 10)), self.direction * random.uniform(0.6, 1.4), self.angled)
+        child1 = asteroid(self.win, 12, self.size, self.pos + vector2D(random.randint(-10, 10), random.randint(-10, 10)), self.direction * random.uniform(0.6, 1.4))
+        child2 = asteroid(self.win, 12, self.size, self.pos + vector2D(random.randint(-10, 10), random.randint(-10, 10)), self.direction * random.uniform(0.6, 1.4))
 
         # sets size to be less than 0 so it will be deleted
         self.size = -1
@@ -210,10 +204,9 @@ class asteroid_holder():
 
         size = random.choice([1] + [2] * 2 + [3] * 3)
 
-        pos = vector2D(x, y)
-        direction = pos - self.ship.pos
+        direction = math.pi * 2 * random.random()
         
-        newAsteroid = asteroid(self.win, self.n, size, (x, y), direction, False)
+        newAsteroid = asteroid(self.win, self.n, size, (x, y), direction)
         self.asteroids.append(newAsteroid)
 
 
